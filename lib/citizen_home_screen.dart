@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/citizen/map_screen.dart'; // ✅ Import Map Screen
+import 'services/aqi_service.dart'; // ✅ AQI fetching service
 
 class CitizenHomeScreen extends StatefulWidget {
   const CitizenHomeScreen({super.key});
@@ -10,6 +11,105 @@ class CitizenHomeScreen extends StatefulWidget {
 
 class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
   int _currentIndex = 0; // ✅ Needed for navigation
+
+  AQIData? currentAQIData;
+  bool isLoadingAQI = false;
+
+  String get aqiStatus {
+    if (currentAQIData == null) return "--";
+    final aqi = currentAQIData!.aqi;
+    if (aqi <= 50) return "Good";
+    if (aqi <= 100) return "Moderate";
+    if (aqi <= 150) return "Unhealthy";
+    return "Hazardous";
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // ensure selectedLocation is valid
+    if (stations.isNotEmpty) {
+      selectedLocation = stations.first;
+    }
+    // load initial AQI for the selected station
+    loadAQI(selectedLocation);
+  }
+
+  /// Public helper used throughout the class (and callable externally)
+  Future<void> loadAQI(String station) async {
+    print('loadAQI called for $station');
+    setState(() {
+      isLoadingAQI = true;
+    });
+    try {
+      final data = await AQIService.fetchCurrentAQIData(station);
+      print('AQIService returned $data');
+      setState(() {
+        currentAQIData = data;
+      });
+    } catch (e, st) {
+      print('Error fetching AQI: $e\n$st');
+      setState(() {
+        currentAQIData = null;
+      });
+    } finally {
+      setState(() {
+        isLoadingAQI = false;
+      });
+    }
+  }
+
+  // ✅ Delhi Stations List (44 Locations)
+  final List<String> stations = [
+    "Indirapuram, Ghaziabad, India",
+    "R.K. Puram, Delhi, Delhi, India",
+    "Major Dhyan Chand National Stadium, Delhi, Delhi, India",
+    "Burari Crossing, Delhi, Delhi, India",
+    "Punjabi Bagh, Delhi, Delhi, India",
+    "DTU, Delhi, Delhi, India",
+    "Sector - 62, Noida, India",
+    "NISE Gwal Pahari, Gurugram, India",
+    "Sector-1, Noida, India",
+    "Anand Vihar, Delhi, Delhi, India",
+    "Vikas Sadan Gurgaon, Gurgaon, India",
+    "Sri Auribindo Marg, Delhi, Delhi, India",
+    "PGDAV College, Sriniwaspuri, Delhi, Delhi, India",
+    "Mandir Marg, Delhi, Delhi, India",
+    "ITO, Delhi, Delhi, India",
+    "Pusa, Delhi, Delhi, India",
+    "Shadipur, Delhi, Delhi, India",
+    "National Institute of Malaria Research, Dwarka, Delhi, India",
+    "ITI Jahangirpuri, Delhi, India",
+    "ITI Shahdra, Jhilmil Industrial Area, Delhi, India",
+    "Shaheed Sukhdev College, Rohini, Delhi, India",
+    "Lodhi Road, Delhi, India",
+    "Aya Nagar, Delhi, India",
+    "Delhi Institute of Tool Engineering, Wazirpur, Delhi, India",
+    "Pooth Khurd, Bawana, Delhi, India",
+    "Sector 30, Faridabad, India",
+    "Mother Dairy Plant, Parparganj, Delhi, India",
+    "Jawaharlal Nehru Stadium, Delhi, India",
+    "Satyawati College, Delhi, India",
+    "Mundka, Delhi, India",
+    "Narela, Delhi, India",
+    "Bramprakash Ayurvedic Hospital, Najafgarh, Delhi, India",
+    "Arya Nagar, Bahadurgarh, India",
+    "Teri Gram, Gurugram, India",
+    "Dr. Karni Singh Shooting Range, Delhi, India",
+    "CRRI Mathura Road, Delhi, India",
+    "Loni, Ghaziabad, India",
+    "Alipur, Delhi, India",
+    "Vasundhara, Ghaziabad, India",
+    "Sector-116, Noida, India",
+    "Sector-51, Gurugram, India",
+    "DITE Okhla, Delhi, India",
+    "Sector - 125, Noida, India",
+    "Sonia Vihar Water Treatment Plant, Delhi, India",
+  ];
+
+  // ✅ Selected Location
+  // start empty; will be set in initState
+  String selectedLocation = "";
 
   @override
   Widget build(BuildContext context) {
@@ -110,27 +210,65 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
 
               const SizedBox(height: 18),
 
-              // Location Dropdown Pill
+              // ✅ Location Dropdown Toggle Pill
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Icon(Icons.location_on_outlined,
-                        color: Color(0xFF00B074)),
-                    SizedBox(width: 6),
-                    Text(
-                      "Lower Manhattan, NY",
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: selectedLocation,
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    isExpanded: false,
+
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
                     ),
-                    SizedBox(width: 6),
-                    Icon(Icons.keyboard_arrow_down),
-                  ],
+
+                    items: stations.map((station) {
+                      return DropdownMenuItem(
+                        value: station,
+                        child: SizedBox(
+                          width: 220,
+                          child: Text(
+                            station,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+
+                    onChanged: (value) {
+                      setState(() {
+                        selectedLocation = value!;
+                      });
+                      // fetch updated data for newly selected station
+                      loadAQI(selectedLocation);
+                    },
+
+                    selectedItemBuilder: (context) {
+                      return stations.map((station) {
+                        return Row(
+                          children: [
+                            const Icon(Icons.location_on_outlined,
+                                color: Color(0xFF00B074)),
+                            const SizedBox(width: 6),
+                            SizedBox(
+                              width: 160,
+                              child: Text(
+                                selectedLocation,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList();
+                    },
+                  ),
                 ),
               ),
 
@@ -169,9 +307,9 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
                             color: Colors.white.withOpacity(0.25),
                             borderRadius: BorderRadius.circular(18),
                           ),
-                          child: const Text(
-                            "Good",
-                            style: TextStyle(
+                          child: Text(
+                            aqiStatus,
+                            style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -182,16 +320,25 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
                     const SizedBox(height: 16),
 
                     // AQI Number
-                    const Text(
-                      "42",
-                      style: TextStyle(
-                        fontSize: 52,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
+                    isLoadingAQI
+                        ? const CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                          )
+                        : Text(
+                            currentAQIData != null
+                                ? currentAQIData!.aqi.toString()
+                                : "N/A",
+                            style: const TextStyle(
+                              fontSize: 52,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
 
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 12),
+
+                    // pollutant details removed – values shown in the grid below
 
                     // Safety Info Pill
                     Container(
@@ -218,27 +365,53 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
 
                     // Pollutant Grid
                     Row(
-                      children: const [
+                      children: [
                         Expanded(
                           child: _PollutantCard(
-                              title: "PM2.5", value: "12.4 µg/m³"),
+                            title: "PM2.5",
+                            value: isLoadingAQI
+                                ? "--"
+                                : currentAQIData != null
+                                    ? "${currentAQIData!.pm25} µg/m³"
+                                    : "--",
+                          ),
                         ),
-                        SizedBox(width: 14),
+                        const SizedBox(width: 14),
                         Expanded(
                           child: _PollutantCard(
-                              title: "PM10", value: "20.1 µg/m³"),
+                            title: "PM10",
+                            value: isLoadingAQI
+                                ? "--"
+                                : currentAQIData != null
+                                    ? "${currentAQIData!.pm10} µg/m³"
+                                    : "--",
+                          ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 14),
                     Row(
-                      children: const [
+                      children: [
                         Expanded(
-                          child: _PollutantCard(title: "NO₂", value: "8.5 ppb"),
+                          child: _PollutantCard(
+                            title: "NO₂",
+                            value: isLoadingAQI
+                                ? "--"
+                                : currentAQIData != null
+                                    ? "${currentAQIData!.no2} ppb"
+                                    : "--",
+                          ),
                         ),
-                        SizedBox(width: 14),
+                        const SizedBox(width: 14),
                         Expanded(
-                          child: _PollutantCard(title: "SO₂", value: "2.3 ppb"),
+                          child: _PollutantCard(
+                            title: "SO₂",
+                            value: isLoadingAQI
+                                ? "--"
+                                : currentAQIData != null
+                                    ? "${currentAQIData!.so2} ppb"
+                                    : "--",
+                          ),
                         ),
                       ],
                     ),

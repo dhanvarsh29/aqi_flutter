@@ -172,6 +172,7 @@ class _MapScreenState extends State<MapScreen> {
                 TileLayer(
                   urlTemplate:
                       "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      userAgentPackageName: 'com.example.aqi',
                 ),
 
                 for (int i = 0; i < routes.length; i++)
