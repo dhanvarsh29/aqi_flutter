@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'screens/citizen/map_screen.dart'; // ✅ Import Map Screen
 import 'services/aqi_service.dart'; // ✅ AQI fetching service
 import 'screens/citizen/ai_aqi_forecast_screen.dart';
+import 'screens/citizen/health_tips_screen.dart';
 
 class CitizenHomeScreen extends StatefulWidget {
   const CitizenHomeScreen({super.key});
@@ -23,6 +24,61 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
     if (aqi <= 100) return "Moderate";
     if (aqi <= 150) return "Unhealthy";
     return "Hazardous";
+  }
+
+  String getHealthTip(int aqi, String dominant) {
+    // Severe AQI first (global advice)
+    if (aqi > 300) {
+      return "Air quality is hazardous. Stay indoors, use an air purifier, and avoid outdoor travel.";
+    }
+
+    if (aqi > 200) {
+      return "Air quality is very unhealthy. Reduce outdoor activity and wear an N95 mask.";
+    }
+
+    if (aqi > 100) {
+      // Pollutant specific tips
+      if (dominant == "pm25") {
+        return "High PM2.5 detected. Wear an N95 mask and avoid outdoor exercise.";
+      }
+      if (dominant == "o3") {
+        return "Ozone levels elevated. Avoid outdoor activity during afternoon hours.";
+      }
+      if (dominant == "no2") {
+        return "Traffic pollution is high. Prefer low-traffic routes and indoor ventilation.";
+      }
+      if (dominant == "pm10") {
+        return "Dust levels are high. Keep windows closed and avoid construction areas.";
+      }
+
+      return "Air quality is poor. Limit prolonged outdoor exposure.";
+    }
+
+    if (aqi > 50) {
+      return "Air quality is moderate. Sensitive individuals should reduce prolonged outdoor activity.";
+    }
+
+    return "Air quality is good. Outdoor activities are safe.";
+  }
+
+  String _dominantPollutant(AQIData data) {
+    final values = <String, double>{
+      "pm25": data.pm25.toDouble(),
+      "pm10": data.pm10.toDouble(),
+      "no2": data.no2,
+      "so2": data.so2,
+    };
+
+    var maxKey = "pm25";
+    var maxValue = values[maxKey] ?? 0.0;
+    values.forEach((key, value) {
+      if (value > maxValue) {
+        maxValue = value;
+        maxKey = key;
+      }
+    });
+
+    return maxKey;
   }
 
   @override
@@ -440,20 +496,31 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
               const SizedBox(height: 25),
 
               // Scrollable Cards Section
-              _InfoCard(
-                color: const Color(0xFFFFE5EA),
-                icon: Icons.error_outline,
-                title: "High Ozone Alert",
-                subtitle: "Ozone levels are rising in your area.",
-                buttonText: "View",
-              ),
-
-              const SizedBox(height: 16),
-
               _SimpleFeatureCard(
                 icon: Icons.favorite_border,
                 title: "Health Tips Near You",
-                subtitle: "Advice based on your current AQI",
+                subtitle: isLoadingAQI || currentAQIData == null
+                    ? "Health tips will appear once data loads."
+                    : getHealthTip(
+                        currentAQIData!.aqi,
+                        _dominantPollutant(currentAQIData!),
+                      ),
+                onTap: isLoadingAQI || currentAQIData == null
+                    ? null
+                    : () {
+                        final dominant = _dominantPollutant(currentAQIData!);
+                        final tip = getHealthTip(currentAQIData!.aqi, dominant);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => HealthTipsScreen(
+                              aqi: currentAQIData!.aqi,
+                              dominantPollutant: dominant,
+                              tip: tip,
+                            ),
+                          ),
+                        );
+                      },
               ),
 
               const SizedBox(height: 16),

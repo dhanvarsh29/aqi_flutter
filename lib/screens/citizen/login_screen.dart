@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'citizen_home_screen.dart';
+import '../../policy_dashboard_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -31,11 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: const Color(0xFF00B074),
                     borderRadius: BorderRadius.circular(18),
                   ),
-                  child: const Icon(
-                    Icons.eco,
-                    color: Colors.white,
-                    size: 35,
-                  ),
+                  child: const Icon(Icons.eco, color: Colors.white, size: 35),
                 ),
 
                 const SizedBox(height: 25),
@@ -52,10 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 8),
                 const Text(
                   "Monitor air quality & stay safe",
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.black54,
-                  ),
+                  style: TextStyle(fontSize: 15, color: Colors.black54),
                 ),
 
                 const SizedBox(height: 35),
@@ -71,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Colors.black.withOpacity(0.05),
                         blurRadius: 20,
                         spreadRadius: 2,
-                      )
+                      ),
                     ],
                   ),
                   child: Column(
@@ -180,7 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               color: const Color(0xFF00B074).withOpacity(0.35),
                               blurRadius: 15,
                               offset: const Offset(0, 8),
-                            )
+                            ),
                           ],
                         ),
                         child: TextButton(
@@ -239,10 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const Text(
                   "By logging in, you agree to our Terms & Privacy Policy",
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.black45,
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.black45),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -275,8 +266,7 @@ class _LoginScreenState extends State<LoginScreen> {
               title,
               style: TextStyle(
                 fontWeight: FontWeight.w600,
-                color:
-                    active ? const Color(0xFF00B074) : Colors.black54,
+                color: active ? const Color(0xFF00B074) : Colors.black54,
               ),
             ),
           ),
@@ -294,18 +284,6 @@ class PolicyDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF6FBFF),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF00B074),
-        title: const Text("Policy Dashboard"),
-      ),
-      body: const Center(
-        child: Text(
-          "Policy Dashboard Screen Coming Soon",
-          style: TextStyle(fontSize: 18),
-        ),
-      ),
-    );
+    return const InterventionChartScreen();
   }
 }
