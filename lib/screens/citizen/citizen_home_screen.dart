@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'map_screen.dart'; // ✅ Import Map Screen
+import 'ai_aqi_forecast_screen.dart'; // ✅ Import AI AQI Forecast Screen
 
 class CitizenHomeScreen extends StatefulWidget {
   const CitizenHomeScreen({super.key});
@@ -28,9 +29,7 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
           if (index == 1) {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const MapScreen(),
-              ),
+              MaterialPageRoute(builder: (context) => const MapScreen()),
             );
           }
         },
@@ -39,11 +38,17 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(icon: Icon(Icons.map_outlined), label: "Map"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.notifications_none), label: "Alerts"),
+            icon: Icon(Icons.notifications_none),
+            label: "Alerts",
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.bar_chart_outlined), label: "Reports"),
+            icon: Icon(Icons.bar_chart_outlined),
+            label: "Reports",
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline), label: "Profile"),
+            icon: Icon(Icons.person_outline),
+            label: "Profile",
+          ),
         ],
       ),
 
@@ -93,11 +98,11 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
                         BoxShadow(
                           color: Colors.black.withOpacity(0.05),
                           blurRadius: 10,
-                        )
+                        ),
                       ],
                     ),
                     child: const Icon(Icons.notifications_none),
-                  )
+                  ),
                 ],
               ),
 
@@ -112,8 +117,10 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
 
               // Location Dropdown Pill
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
@@ -121,8 +128,7 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: const [
-                    Icon(Icons.location_on_outlined,
-                        color: Color(0xFF00B074)),
+                    Icon(Icons.location_on_outlined, color: Color(0xFF00B074)),
                     SizedBox(width: 6),
                     Text(
                       "Lower Manhattan, NY",
@@ -164,7 +170,9 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.25),
                             borderRadius: BorderRadius.circular(18),
@@ -172,10 +180,11 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
                           child: const Text(
                             "Good",
                             style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        )
+                        ),
                       ],
                     ),
 
@@ -196,20 +205,25 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
                     // Safety Info Pill
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 10),
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.18),
                         borderRadius: BorderRadius.circular(18),
                       ),
                       child: Row(
                         children: const [
-                          Icon(Icons.verified_user,
-                              color: Colors.white, size: 18),
+                          Icon(
+                            Icons.verified_user,
+                            color: Colors.white,
+                            size: 18,
+                          ),
                           SizedBox(width: 8),
                           Text(
                             "Safe for outdoor activities today.",
                             style: TextStyle(color: Colors.white),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -221,12 +235,16 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
                       children: const [
                         Expanded(
                           child: _PollutantCard(
-                              title: "PM2.5", value: "12.4 µg/m³"),
+                            title: "PM2.5",
+                            value: "12.4 µg/m³",
+                          ),
                         ),
                         SizedBox(width: 14),
                         Expanded(
                           child: _PollutantCard(
-                              title: "PM10", value: "20.1 µg/m³"),
+                            title: "PM10",
+                            value: "20.1 µg/m³",
+                          ),
                         ),
                       ],
                     ),
@@ -271,6 +289,12 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
                 icon: Icons.auto_graph,
                 title: "AI AQI Forecast",
                 subtitle: "Next 72 hours prediction",
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const AiAqiForecastScreen(),
+                  ),
+                ),
               ),
 
               const SizedBox(height: 16),
@@ -295,10 +319,7 @@ class _PollutantCard extends StatelessWidget {
   final String title;
   final String value;
 
-  const _PollutantCard({
-    required this.title,
-    required this.value,
-  });
+  const _PollutantCard({required this.title, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -311,16 +332,19 @@ class _PollutantCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-              style: const TextStyle(color: Colors.white70, fontSize: 13)),
+          Text(
+            title,
+            style: const TextStyle(color: Colors.white70, fontSize: 13),
+          ),
           const SizedBox(height: 6),
           Text(
             value,
             style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 16),
-          )
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
         ],
       ),
     );
@@ -364,12 +388,15 @@ class _InfoCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(subtitle,
-                    style: const TextStyle(color: Colors.black54)),
+                Text(subtitle, style: const TextStyle(color: Colors.black54)),
               ],
             ),
           ),
@@ -378,11 +405,12 @@ class _InfoCard extends StatelessWidget {
               backgroundColor: Colors.white,
               foregroundColor: Colors.redAccent,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
             onPressed: () {},
             child: Text(buttonText),
-          )
+          ),
         ],
       ),
     );
@@ -396,49 +424,54 @@ class _SimpleFeatureCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
+  final VoidCallback? onTap;
 
   const _SimpleFeatureCard({
     required this.icon,
     required this.title,
     required this.subtitle,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 12,
-          )
-        ],
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            backgroundColor: Colors.grey.shade100,
-            child: Icon(icon, color: Colors.black87),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16)),
-                const SizedBox(height: 4),
-                Text(subtitle,
-                    style: const TextStyle(color: Colors.black54)),
-              ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12),
+          ],
+        ),
+        child: Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: Colors.grey.shade100,
+              child: Icon(icon, color: Colors.black87),
             ),
-          ),
-          const Icon(Icons.arrow_forward_ios, size: 16)
-        ],
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(subtitle, style: const TextStyle(color: Colors.black54)),
+                ],
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios, size: 16),
+          ],
+        ),
       ),
     );
   }
