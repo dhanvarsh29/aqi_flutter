@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'screens/citizen/map_screen.dart'; // ✅ Import Map Screen
 import 'services/aqi_service.dart'; // ✅ AQI fetching service
 import 'screens/citizen/ai_aqi_forecast_screen.dart';
 import 'screens/citizen/health_tips_screen.dart';
+import 'screens/citizen/seasonal_pollution_trends_screen.dart';
 
 class CitizenHomeScreen extends StatefulWidget {
   const CitizenHomeScreen({super.key});
@@ -12,8 +12,6 @@ class CitizenHomeScreen extends StatefulWidget {
 }
 
 class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
-  int _currentIndex = 0; // ✅ Needed for navigation
-
   AQIData? currentAQIData;
   bool isLoadingAQI = false;
 
@@ -172,42 +170,6 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF6FBFF),
-
-      // ✅ Bottom Navigation
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        selectedItemColor: const Color(0xFF00B074),
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
-
-        // ✅ ONLY MAP NAVIGATION ADDED
-        onTap: (index) {
-          if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MapScreen()),
-            );
-          }
-        },
-
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.map_outlined), label: "Map"),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications_none),
-            label: "Alerts",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart_outlined),
-            label: "Reports",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: "Profile",
-          ),
-        ],
-      ),
-
       // ✅ FULL OLD UI BODY (UNCHANGED)
       body: SafeArea(
         child: SingleChildScrollView(
@@ -544,6 +506,12 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
                 icon: Icons.calendar_month_outlined,
                 title: "Seasonal Pollution Trends",
                 subtitle: "Compare air quality across months",
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const SeasonalPollutionTrendsScreen(),
+                  ),
+                ),
               ),
             ],
           ),
@@ -595,68 +563,6 @@ class _PollutantCard extends StatelessWidget {
 //
 // Alert Card Widget
 //
-class _InfoCard extends StatelessWidget {
-  final Color color;
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final String buttonText;
-
-  const _InfoCard({
-    required this.color,
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.buttonText,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(22),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            backgroundColor: Colors.redAccent,
-            child: Icon(icon, color: Colors.white),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(subtitle, style: const TextStyle(color: Colors.black54)),
-              ],
-            ),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.redAccent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-            onPressed: () {},
-            child: Text(buttonText),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 //
 // Feature Card Widget

@@ -623,8 +623,6 @@ class _AqiChart extends StatelessWidget {
                 final isXGrid =
                     (xMax == 24 && xInt % 2 == 0) ||
                     (xMax == 72 && xInt % 6 == 0);
-                final isYGrid = yInt % 50 == 0;
-
                 // Only show if near grid intersection
                 if (isXGrid && (s.y - yInt).abs() < 8) {
                   return LineTooltipItem(

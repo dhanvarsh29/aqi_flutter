@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'citizen_home_screen.dart';
 import 'screens/citizen/map_screen.dart';
+import 'screens/citizen/alerts_screen.dart';
+import 'screens/citizen/reports_screen.dart';
+import 'screens/citizen/profile_screen.dart';
 
 class MainWrapper extends StatefulWidget {
   const MainWrapper({super.key});
@@ -15,6 +18,9 @@ class _MainWrapperState extends State<MainWrapper> {
   final screens = const [
     CitizenHomeScreen(),
     MapScreen(),
+    AlertsScreen(),
+    ReportsScreen(),
+    ProfileScreen(),
   ];
 
   @override
@@ -35,14 +41,8 @@ class _MainWrapperState extends State<MainWrapper> {
         },
 
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map_outlined),
-            label: "Map",
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(icon: Icon(Icons.map_outlined), label: "Map"),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications_none),
             label: "Alerts",
